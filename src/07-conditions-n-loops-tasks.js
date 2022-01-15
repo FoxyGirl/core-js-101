@@ -278,8 +278,32 @@ function reverseInteger(num) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const lastNumber = Number(String(ccn).slice(-1));
+
+  const digitSum = String(ccn)
+    .slice(0, -1)
+    .split('')
+    .reverse()
+    .reduce((acc, item, index) => {
+      const itemNum = Number(item);
+
+      if (index % 2 === 0) {
+        const newItemNum = itemNum * 2;
+
+        return newItemNum < 10
+          ? acc + newItemNum
+          : acc + Math.floor(newItemNum / 10) + (newItemNum % 10);
+      }
+
+      return acc + itemNum;
+    }, 0);
+
+  const checkDigit = 10 - (Math.abs(digitSum) % 10);
+
+  return checkDigit < 10
+    ? checkDigit === lastNumber
+    : checkDigit % 10 === lastNumber;
 }
 
 /**
@@ -328,8 +352,39 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const brackets = {
+    '[': ']',
+    '(': ')',
+    '{': '}',
+    '<': '>',
+  };
+
+  const startBrackets = Object.keys(brackets);
+  const endBrackets = Object.values(brackets);
+
+  let stack = '';
+  const arr = str.split('');
+
+  for (let i = 0; i < arr.length; i += 1) {
+    const currentItem = arr[i];
+
+    if (startBrackets.includes(currentItem)) {
+      stack += currentItem;
+    }
+
+    if (endBrackets.includes(currentItem)) {
+      const lastItem = stack[stack.length - 1];
+
+      if (!!brackets[lastItem] && brackets[lastItem] === currentItem) {
+        stack = stack.slice(0, stack.length - 1);
+      } else {
+        stack += currentItem;
+      }
+    }
+  }
+
+  return !stack;
 }
 
 
